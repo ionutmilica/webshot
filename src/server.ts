@@ -10,28 +10,28 @@ import Container = global.Container;
 dotEnv.config();
 
 export default async () => {
-    const browser = await puppeteer.launch();
-    const app = express();
+  const browser = await puppeteer.launch();
+  const app = express();
 
-    app.use(logger('dev'));
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(logger('dev'));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
 
-    // Compose options
-    const opts: Container = {
-        browser,
-    };
+  // Compose options
+  const opts: Container = {
+    browser,
+  };
 
-    app.use('/api/v1', secretMiddleware('secret'), api(opts));
+  app.use('/api/v1', secretMiddleware('secret'), api(opts));
 
-    const server = app.listen(5000, () => {
-        console.log(`Server started listening on port: ${5000}.`);
-    });
+  const server = app.listen(5000, () => {
+    console.log(`Server started listening on port: ${5000}.`);
+  });
 
-    const close = async (callback = () => {}) => {
-        await browser.close();
-        server.close(callback);
-    };
+  const close = async (callback = () => {}) => {
+    await browser.close();
+    server.close(callback);
+  };
 
-    return await { server, close };
+  return await { server, close };
 };

@@ -5,25 +5,22 @@ export = puppeteer;
 declare function puppeteer(...args: any[]): any;
 
 declare namespace puppeteer {
-    import EventEmitter = NodeJS.EventEmitter;
-    const prototype: {
-    };
+  import EventEmitter = NodeJS.EventEmitter;
+  const prototype: {};
 
-    interface Page extends EventEmitter {
-        setViewport(opts: any): void;
-        goto(url: string, options?: any): Promise<any>;
-        screenshot(opts: any): Promise<any>;
-        evaluate(callback: any): Promise<any>;
-    }
+  interface Page extends EventEmitter {
+    setViewport(opts: any): void;
+    goto(url: string, options?: any): Promise<any>;
+    screenshot(opts: any): Promise<any>;
+    evaluate(callback: any): Promise<any>;
+  }
 
-    interface Browser extends EventEmitter {
-        close(): Promise<any>;
-        newPage(): Page;
-    }
+  interface Browser extends EventEmitter {
+    close(): Promise<any>;
+    newPage(): Page;
+  }
 
-    function connect(...args: any[]): void;
+  function connect(...args: any[]): void;
 
-    function launch(...args: any[]): Browser;
-
+  function launch(...args: any[]): Browser;
 }
-

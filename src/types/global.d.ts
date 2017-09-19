@@ -1,5 +1,5 @@
 declare namespace global {
-    export interface Container {
-        browser: any;
-    }
+  export interface Container {
+    browser: any;
+  }
 }
