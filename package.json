@@ -1,0 +1,10 @@
+{
+  "name": "tiny-webshot",
+  "version": "0.0.1",
+  "main": "app.js",
+  "author": "Ionut Milica",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "puppeteer": "^0.10.2"
+  }
+}
