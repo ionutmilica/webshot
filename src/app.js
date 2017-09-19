@@ -3,11 +3,12 @@ const puppeteer = require('puppeteer');
 (async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setViewport({ width: 1280, height: 720 });
 
   page.on('console', (...args) => console.log('PAGE LOG:', ...args));
 
-  await page.goto('https://youtube.com');
-  await page.screenshot({ path: 'example.png', fullPage: true });
+  await page.goto('https://www.apple.com/macbook-pro/specs/');
+  await page.screenshot({ path: 'example.png' });
 
   const meta = await page.evaluate(async () => {
     const meta = { title: document.title, description: '', image: '' };
