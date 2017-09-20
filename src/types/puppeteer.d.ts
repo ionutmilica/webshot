@@ -13,6 +13,7 @@ declare namespace puppeteer {
     goto(url: string, options?: any): Promise<any>;
     screenshot(opts: any): Promise<any>;
     evaluate(callback: any): Promise<any>;
+    close(): Promise<any>;
   }
 
   interface Browser extends EventEmitter {
