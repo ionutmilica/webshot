@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as AWS from 'aws-sdk';
 
-export interface S3 {
+export interface S3Manager {
   /**
    * Upload local file to S3
    *
@@ -22,7 +22,7 @@ export interface S3 {
   getPublicUrl(bucket: string, key: string): string;
 }
 
-class S3Manager implements S3 {
+export default class S3ManagerImpl implements S3Manager {
   private s3: AWS.S3;
   private accessKey: string;
   private secretKey: string;
@@ -75,5 +75,3 @@ class S3Manager implements S3 {
   }
 
 }
-
-export default S3Manager;

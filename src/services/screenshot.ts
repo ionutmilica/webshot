@@ -1,4 +1,5 @@
-import { S3 } from '../lib/s3-manager';
+import * as uuid from 'uuid/v4';
+import { S3Manager } from '../lib/s3-manager';
 import { normalizeUrl } from '../lib/url';
 import { Browser, Page } from 'puppeteer';
 
@@ -10,9 +11,9 @@ interface Meta {
 
 export default class ScreenShotService {
   browser: Browser;
-  s3Manager: S3;
+  s3Manager: S3Manager;
 
-  constructor(browser: any, s3Manager: S3) {
+  constructor(browser: any, s3Manager: S3Manager) {
     this.browser = browser;
     this.s3Manager = s3Manager;
   }
@@ -81,8 +82,9 @@ export default class ScreenShotService {
     let meta: Meta = await this.getMeta(page);
 
     if (meta.image.length === 0) {
-      await page.screenshot({ path: 'example.png' });
-      meta = { ...meta, image: 'example.png' };
+      const filename = `${uuid()}.png`;
+      await page.screenshot({ path: `/tmp/${filename}` });
+      meta = { ...meta, image: filename };
     }
 
     await page.close();

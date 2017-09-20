@@ -5,7 +5,7 @@ import * as dotEnv from 'dotenv';
 import * as puppeteer from 'puppeteer';
 import api from './routes';
 import secretMiddleware from './middleware/secret';
-import S3Manager from './lib/s3-manager';
+import S3ManagerImpl from './lib/s3-manager';
 import ScreenShotService from './services/screenshot';
 import Container = global.Container;
 
@@ -25,7 +25,7 @@ export default async () => {
     browser,
     screenshot: new ScreenShotService(
       browser,
-      new S3Manager(S3_ACCESS_KEY, S3_SECRET_KEY, S3_REGION),
+      new S3ManagerImpl(S3_ACCESS_KEY, S3_SECRET_KEY, S3_REGION),
     ),
   };
 
