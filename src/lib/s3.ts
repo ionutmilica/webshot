@@ -8,9 +8,15 @@ export interface S3Manager {
    * @param {string} from
    * @param {string} bucket
    * @param {string} key
+   * @param contentType
    * @returns {Promise<any>}
    */
-  upload(from: string, bucket: string, key: string): Promise<any>;
+  upload(
+    from: string,
+    bucket: string,
+    key: string,
+    contentType?: string,
+  ): Promise<any>;
 
   /**
    * It will compose the public url for bucket/key pair
@@ -51,14 +57,21 @@ export default class S3ManagerImpl implements S3Manager {
    * @param {string} from
    * @param {string} bucket
    * @param {string} key
+   * @param {string} contentType
    * @returns {Promise<void>}
    */
-  async upload(from: string, bucket: string, key: string) {
+  async upload(
+    from: string,
+    bucket: string,
+    key: string,
+    contentType?: string,
+  ) {
     const fileStream = fs.createReadStream(from);
     const params = {
       Bucket: bucket,
       Key: key,
       Body: fileStream,
+      ContentType: contentType || 'image/png',
     };
     return this.s3.putObject(params).promise();
   }

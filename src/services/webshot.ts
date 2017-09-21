@@ -67,7 +67,10 @@ export default class WebShotService {
     // Will allow node to see logs from chrome
     page.on('console', (...args: any[]) => console.log('CHROME:', ...args));
 
-    await page.goto(url);
+    await page.goto(url, {
+      networkIdleTimeout: 1000,
+      waitUntil: 'networkidle',
+    });
 
     return page;
   }
@@ -86,13 +89,15 @@ export default class WebShotService {
     const meta: Meta = await this.getMeta(page);
 
     // If there is no image found, make a screenshot
+    meta.image = '';
     if (meta.image.length === 0) {
-      const filename = `${uuid()}.png`;
+      const filename = `${uuid()}.jpeg`;
+      const objectKey = `screenshots/${filename}`;
       const filePath = `/tmp/${filename}`;
       await page.screenshot({ path: filePath });
       // Upload image to S3
-      await this.s3Manager.upload(filePath, 'tinyec', filename);
-      imageUrl = this.s3Manager.getPublicUrl('tiny.ec', filename);
+      await this.s3Manager.upload(filePath, 'tinyec', objectKey);
+      imageUrl = this.s3Manager.getPublicUrl('tinyec', objectKey);
     } else {
       imageUrl = normalizeUrl(meta.image, url);
     }
