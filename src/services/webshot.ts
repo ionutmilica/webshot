@@ -1,5 +1,5 @@
 import * as uuid from 'uuid/v4';
-import { S3Manager } from '../lib/s3-manager';
+import { S3Manager } from '../lib/s3';
 import { normalizeUrl } from '../lib/url';
 import { Browser, Page } from 'puppeteer';
 
@@ -9,11 +9,11 @@ interface Meta {
   image: string;
 }
 
-export default class ScreenShotService {
+export default class WebShotService {
   browser: Browser;
   s3Manager: S3Manager;
 
-  constructor(browser: any, s3Manager: S3Manager) {
+  constructor(browser: Browser, s3Manager: S3Manager) {
     this.browser = browser;
     this.s3Manager = s3Manager;
   }
@@ -44,10 +44,13 @@ export default class ScreenShotService {
         }))
         .filter(({ content }) => !!content)
         .filter(({ name }) => neededTags.indexOf(name) !== -1)
-        .reduce((acc, { name, content }) => ({
-          ...acc,
-          [name]: content,
-        }), meta);
+        .reduce(
+          (acc, { name, content }) => ({
+            ...acc,
+            [name]: content,
+          }),
+          meta,
+        );
     });
   }
 
@@ -78,17 +81,25 @@ export default class ScreenShotService {
    * @returns {Promise<Meta>}
    */
   async process(url: string): Promise<Meta> {
+    let imageUrl: string;
     const page = await this.openPage(url);
-    let meta: Meta = await this.getMeta(page);
+    const meta: Meta = await this.getMeta(page);
 
+    // If there is no image found, make a screenshot
     if (meta.image.length === 0) {
       const filename = `${uuid()}.png`;
-      await page.screenshot({ path: `/tmp/${filename}` });
-      meta = { ...meta, image: filename };
+      const filePath = `/tmp/${filename}`;
+      await page.screenshot({ path: filePath });
+      // Upload image to S3
+      await this.s3Manager.upload(filePath, 'tinyec', filename);
+      imageUrl = this.s3Manager.getPublicUrl('tiny.ec', filename);
+    } else {
+      imageUrl = normalizeUrl(meta.image, url);
     }
 
+    // Close the browser tab so we don't waste memory
     await page.close();
-    return meta;
-  }
 
+    return { ...meta, image: imageUrl };
+  }
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import Container = global.Container;
+import { Container } from '../../container';
 
-export default ({ screenshot }: Container) => {
+export default ({ webShot }: Container) => {
   return async (req: Request, res: Response) => {
     const { url } = req.body;
 
@@ -9,8 +9,6 @@ export default ({ screenshot }: Container) => {
       return res.status(422).send({ message: 'An url attribute is expected.' });
     }
 
-    res.status(200).send(
-      await screenshot.process(url)
-    );
+    res.status(200).send(await webShot.process(url));
   };
 };

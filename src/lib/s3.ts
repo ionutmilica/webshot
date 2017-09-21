@@ -73,5 +73,4 @@ export default class S3ManagerImpl implements S3Manager {
   getPublicUrl(bucket: string, key: string): string {
     return `https://s3.${this.region}.amazonaws.com/${bucket}/${key}`;
   }
-
 }

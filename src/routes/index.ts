@@ -1,6 +1,6 @@
 import * as PromiseRouter from 'express-promise-router';
-import Container = global.Container;
 import screenshot from './screenshot';
+import { Container } from '../container';
 
 export default (opts: Container) => {
   const router = PromiseRouter();

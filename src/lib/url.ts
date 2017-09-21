@@ -1,7 +1,7 @@
 import * as url from 'url';
 
-export function normalizeUrl (currentImageUrl: string, pageUrl: string): string {
-  if (currentImageUrl === '') {
+export function normalizeUrl(currentImageUrl: string, pageUrl: string): string {
+  if (currentImageUrl.length === 0) {
     return '';
   }
 
