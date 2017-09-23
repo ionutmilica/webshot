@@ -1,7 +1,11 @@
+import { promisify } from 'util';
+import * as fs from 'fs';
 import * as uuid from 'uuid/v4';
 import { S3Manager } from '../lib/s3';
 import { normalizeUrl } from '../lib/url';
 import { Browser, Page } from 'puppeteer';
+
+const unlinkAsync = promisify(fs.unlink);
 
 interface Meta {
   title: string;
@@ -89,15 +93,8 @@ export default class WebShotService {
     const meta: Meta = await this.getMeta(page);
 
     // If there is no image found, make a screenshot
-    meta.image = '';
     if (meta.image.length === 0) {
-      const filename = `${uuid()}.jpeg`;
-      const objectKey = `screenshots/${filename}`;
-      const filePath = `/tmp/${filename}`;
-      await page.screenshot({ path: filePath });
-      // Upload image to S3
-      await this.s3Manager.upload(filePath, 'tinyec', objectKey);
-      imageUrl = this.s3Manager.getPublicUrl('tinyec', objectKey);
+      imageUrl = await this.screenShotAndUpload(page);
     } else {
       imageUrl = normalizeUrl(meta.image, url);
     }
@@ -106,5 +103,25 @@ export default class WebShotService {
     await page.close();
 
     return { ...meta, image: imageUrl };
+  }
+
+  /**
+   * This method will create a screen shot, store it locally then upload it to the S3
+   *
+   * @param {Page} page
+   * @returns {string}
+   */
+  protected async screenShotAndUpload(page: Page): Promise<string> {
+    const filename = `${uuid()}.jpeg`;
+    const objectKey = `screenshots/${filename}`;
+    const filePath = `/tmp/${filename}`;
+
+    // Create a new screen shot
+    await page.screenshot({ path: filePath });
+    // Upload image to S3
+    await this.s3Manager.upload(filePath, 'tinyec', objectKey);
+    await unlinkAsync(filePath);
+
+    return this.s3Manager.getPublicUrl('tinyec', objectKey);
   }
 }
