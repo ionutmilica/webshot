@@ -1,7 +1,7 @@
 import getServer from './server';
 
 (async () => {
-  const { server, close } = await getServer();
+  const { close } = await getServer();
 
   process.on('SIGINT', () => {
     // logger.debug('Received SIGINT. Shutting down now.');
