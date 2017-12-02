@@ -1,10 +1,11 @@
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as uuid from 'uuid/v4';
-import { S3Manager } from '../lib/s3';
 import { normalizeUrl } from '../lib/url';
 import { Browser, Page } from 'puppeteer';
+import {Uploader} from "../lib/uploader";
 
+const existsAsync = promisify(fs.exists);
 const unlinkAsync = promisify(fs.unlink);
 
 interface Meta {
@@ -15,11 +16,11 @@ interface Meta {
 
 export default class WebShotService {
   browser: Browser;
-  s3Manager: S3Manager;
+  uploader: Uploader;
 
-  constructor(browser: Browser, s3Manager: S3Manager) {
+  constructor(browser: Browser, uploader: Uploader) {
     this.browser = browser;
-    this.s3Manager = s3Manager;
+    this.uploader = uploader;
   }
 
   /**
@@ -110,15 +111,17 @@ export default class WebShotService {
    */
   protected async screenShotAndUpload(page: Page): Promise<string> {
     const filename = `${uuid()}.jpeg`;
-    const objectKey = `screenshots/${filename}`;
     const filePath = `/tmp/${filename}`;
 
     // Create a new screen shot
     await page.screenshot({ path: filePath });
     // Upload image to S3
-    await this.s3Manager.upload(filePath, 'tinyec', objectKey);
-    await unlinkAsync(filePath);
+    await this.uploader.upload(filePath, filename);
 
-    return this.s3Manager.getPublicUrl('tinyec', objectKey);
+    if (await existsAsync(filePath)) {
+      await unlinkAsync(filePath);
+    }
+
+    return this.uploader.getPublicUrl(filename);
   }
 }

@@ -11,7 +11,8 @@ export default ({ webShot }: Container) => {
 
     try {
       res.status(200).send(await webShot.process(url));
-    } catch {
+    } catch (err) {
+      console.log(err);
       res.status(404).send({ message: 'Site not found.' });
     }
   };
