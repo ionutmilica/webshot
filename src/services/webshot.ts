@@ -71,10 +71,7 @@ export default class WebShotService {
     // Will allow node to see logs from chrome
     page.on('console', (...args: any[]) => console.log('CHROME:', ...args));
 
-    await page.goto(url, {
-      networkIdleTimeout: 1000,
-      waitUntil: 'networkidle',
-    });
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
     return page;
   }
