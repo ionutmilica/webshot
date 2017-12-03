@@ -7,15 +7,23 @@ import api from './routes';
 import secretMiddleware from './middleware/secret';
 import { Container } from './container';
 import WebShotService from './services/webshot';
-import { LocalUploader, S3Uploader, Uploader } from "./lib/uploader";
-import * as path from "path";
+import { LocalUploader, S3Uploader, Uploader } from './lib/uploader';
+import * as path from 'path';
 
 dotEnv.config();
 
 const basePath = path.join(__dirname, '..', 'public');
 
 export default async () => {
-  const { S3_ACCESS_KEY, S3_SECRET_KEY, S3_REGION, S3_BUCKET, STORAGE_DRIVER, APP_URL, SECRET } = process.env;
+  const {
+    S3_ACCESS_KEY,
+    S3_SECRET_KEY,
+    S3_REGION,
+    S3_BUCKET,
+    STORAGE_DRIVER,
+    APP_URL,
+    SECRET,
+  } = process.env;
   const browser = await puppeteer.launch();
   const app = express();
 
@@ -29,7 +37,12 @@ export default async () => {
 
   switch (STORAGE_DRIVER) {
     case 's3':
-      uploader = new S3Uploader(S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET, S3_REGION);
+      uploader = new S3Uploader(
+        S3_ACCESS_KEY,
+        S3_SECRET_KEY,
+        S3_BUCKET,
+        S3_REGION,
+      );
       break;
     default:
       uploader = new LocalUploader(basePath, APP_URL);
@@ -37,10 +50,7 @@ export default async () => {
 
   const opts: Container = {
     browser,
-    webShot: new WebShotService(
-      browser,
-      uploader,
-    ),
+    webShot: new WebShotService(browser, uploader),
   };
 
   app.use('/api/v1', secretMiddleware(SECRET), api(opts));

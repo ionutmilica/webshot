@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as AWS from 'aws-sdk';
-import { Uploader } from "./uploader";
+import { Uploader } from './uploader';
 
 export class S3Uploader implements Uploader {
   private s3: AWS.S3;
@@ -16,7 +16,12 @@ export class S3Uploader implements Uploader {
    * @param bucket
    * @param {string} region
    */
-  constructor(accessKey: string, secretKey: string, bucket: string, region: string) {
+  constructor(
+    accessKey: string,
+    secretKey: string,
+    bucket: string,
+    region: string,
+  ) {
     AWS.config.update({
       accessKeyId: accessKey,
       secretAccessKey: secretKey,
@@ -36,11 +41,7 @@ export class S3Uploader implements Uploader {
    * @param {string} contentType
    * @returns {Promise<void>}
    */
-  async upload(
-    from: string,
-    to: string,
-    contentType?: string,
-  ) {
+  async upload(from: string, to: string, contentType?: string) {
     const fileStream = fs.createReadStream(from);
     const params = {
       Bucket: this.bucket,
@@ -60,5 +61,4 @@ export class S3Uploader implements Uploader {
   getPublicUrl(key: string): string {
     return `https://s3.${this.region}.amazonaws.com/${this.bucket}/${key}`;
   }
-
 }

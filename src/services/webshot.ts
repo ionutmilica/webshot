@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as uuid from 'uuid/v4';
 import { normalizeUrl } from '../lib/url';
 import { Browser, Page } from 'puppeteer';
-import {Uploader} from "../lib/uploader";
+import { Uploader } from '../lib/uploader';
 
 const existsAsync = promisify(fs.exists);
 const unlinkAsync = promisify(fs.unlink);

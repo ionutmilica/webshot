@@ -1,4 +1,4 @@
-import { Uploader } from "./uploader";
+import { Uploader } from './uploader';
 import { promisify } from 'util';
 import * as fs from 'fs';
 

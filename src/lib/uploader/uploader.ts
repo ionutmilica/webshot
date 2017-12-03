@@ -7,11 +7,7 @@ export interface Uploader {
    * @param contentType
    * @returns {Promise<any>}
    */
-  upload(
-    from: string,
-    key: string,
-    contentType?: string,
-  ): Promise<any>;
+  upload(from: string, key: string, contentType?: string): Promise<any>;
 
   /**
    * It will compose the public url for the file
