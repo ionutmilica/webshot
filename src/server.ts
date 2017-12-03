@@ -16,6 +16,7 @@ const basePath = path.join(__dirname, '..', 'public');
 
 export default async () => {
   const {
+    PORT = 5000,
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
     S3_REGION,
@@ -55,8 +56,8 @@ export default async () => {
 
   app.use('/api/v1', secretMiddleware(SECRET), api(opts));
 
-  const server = app.listen(5000, () => {
-    console.log(`Server started listening on port: ${5000}.`);
+  const server = app.listen(PORT, () => {
+    console.log(`Server started listening on port: ${PORT}.`);
   });
 
   const close = async (callback = () => {}) => {

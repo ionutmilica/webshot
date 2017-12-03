@@ -115,7 +115,7 @@ export default class WebShotService {
 
     // Create a new screen shot
     await page.screenshot({ path: filePath });
-    // Upload image to S3
+
     await this.uploader.upload(filePath, filename);
 
     if (await existsAsync(filePath)) {
